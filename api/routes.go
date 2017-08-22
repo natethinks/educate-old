@@ -1,31 +1,60 @@
 package main
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
 
-// Defines a single route, e.g. a human readable name, HTTP method, pattern the function that will execute when the route is called.
-type Route struct {
-	Name        string
-	Method      string
-	Pattern     string
-	HandlerFunc http.HandlerFunc
+	"github.com/gorilla/mux"
+	"github.com/urfave/negroni"
+)
+
+// Handler something
+type Handler func(w http.ResponseWriter, r *http.Request)
+
+var router *mux.Router
+
+// LoadRoutes something
+func LoadRoutes() *mux.Router {
+	router = mux.NewRouter()
+
+	router.HandleFunc("/", Test).Methods("GET")
+	router.HandleFunc("/login", Login).Methods("POST")
+	router.HandleFunc("/register", Register).Methods("POST")
+	router.HandleFunc("/test", Test).Methods("GET")
+
+	SetRoute("POST", "/secure", Secure)
+
+	return router
 }
 
-// Defines the type Routes which is just an array (slice) of Route structs.
-type Routes []Route
+// SetUnsecuredRoute something
+// func SetUnsecuredRoute(method string, path string, fu Handler) {
+// 	router.HandleFunc(path, fu).Methods(method)
+// }
 
-// Initialize our routes
-var routes = Routes{
+// SetRoute something
+func SetRoute(method string, path string, fu Handler) {
+	router.Handle(path, authedHandler(fu)).Methods(method)
+}
 
-	Route{
-		"GetAccount", // Name
-		"GET",        // HTTP method
-		"/accounts/{accountId}", // Route pattern
-		GetAccount,
-	},
-	Route{
-		"HealthCheck",
-		"GET",
-		"/health",
-		HealthCheck,
-	},
+func authedHandler(fu Handler) *negroni.Negroni {
+	return negroni.New(
+		negroni.HandlerFunc(handlerWithNext),
+		negroni.Wrap(http.HandlerFunc(fu)),
+	)
+}
+
+// handlerwithnext is where my control really lies. This is where I check the token
+
+func handlerWithNext(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	err := checkSession(w, r)
+
+	// If there was an error, do not call next.
+	if err == nil && next != nil {
+		next(w, r)
+	}
+}
+
+func checkSession(w http.ResponseWriter, r *http.Request) error {
+	return fmt.Errorf("Error extracting token: 1234")
 }

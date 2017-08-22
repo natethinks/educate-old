@@ -1,19 +1,36 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
+	"fmt"
+	"net/http"
 )
 
-func NewRouter() *mux.Router {
+// Login checks login credentials, creates session and returns session id to client
+func Login(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Welcome to the login page!")
+	return
+}
 
-	router := mux.NewRouter().StrictSlash(true)
-	for _, route := range routes {
+// Register accepts new user credentials and creates new user if valid
+func Register(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Welcome to the register page!")
+	return
+}
 
-		router.Methods(route.Method).
-			Path(route.Pattern).
-			Name(route.Name).
-			Handler(route.HandlerFunc)
+// Secure is for testing a secure endpoint
+func Secure(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Welcome to the secured page")
+	return
+}
 
-	}
-	return router
+// JSONarray things
+type JSONarray struct {
+	Name string `json:"name"`
+	ID   int    `json:"id"`
+}
+
+// Test things
+func Test(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Welcome to the test page")
+	return
 }

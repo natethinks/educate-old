@@ -1,23 +1,27 @@
 package main
 
 import (
-	auth "api/auth"
-	"log"
+	"database/sql"
+	"fmt"
 	"net/http"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/urfave/negroni"
 )
 
-func StartWebServer(port string) {
+func main() {
+	// loading routes from routes.go
+	myRouter := LoadRoutes()
+	n := negroni.Classic() // Includes some default middlewares
+	n.UseHandler(myRouter)
 
-	r := NewRouter()
-	http.Handle("/", r)
-
-	auth.Test()
-
-	log.Println("Starting HTTP service at " + port)
-	err := http.ListenAndServe(":"+port, nil)
-
+	// set up for docker mysql image
+	db, err := sql.Open("mysql", "root:root@tcp(172.17.0.2:3306)/mysqldb")
 	if err != nil {
-		log.Println("An error occured starting HTTP listener at port " + port)
-		log.Println("Error: " + err.Error())
+		panic(err)
 	}
+	defer db.Close()
+
+	fmt.Println("Server running on port 3000")
+	http.ListenAndServe(":3000", n)
 }
