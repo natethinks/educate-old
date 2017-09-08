@@ -7,7 +7,6 @@ import { AuthComponent } from './auth/auth.component';
 
 const rootRouting: ModuleWithProviders = RouterModule.forRoot([], { useHash: true });
 
-
 @NgModule({
   declarations: [
     AppComponent,
