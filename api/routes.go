@@ -17,10 +17,10 @@ var router *mux.Router
 func LoadRoutes() *mux.Router {
 	router = mux.NewRouter()
 
-	router.HandleFunc("/", Test).Methods("GET")
-	router.HandleFunc("/login", Login).Methods("POST")
-	router.HandleFunc("/register", Register).Methods("POST")
-	router.HandleFunc("/test", Test).Methods("GET")
+	router.HandleFunc("/api", Test).Methods("GET")
+	router.HandleFunc("/api/login", Login).Methods("POST")
+	router.HandleFunc("/api/register", Register).Methods("POST")
+	router.HandleFunc("/api/test", Test).Methods("GET")
 
 	SetRoute("POST", "/secure", Secure)
 
