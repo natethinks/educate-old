@@ -21,6 +21,7 @@ func LoadRoutes() *mux.Router {
 	router.HandleFunc("/api/login", Login).Methods("POST")
 	router.HandleFunc("/api/register", Register).Methods("POST")
 	router.HandleFunc("/api/test", Test).Methods("GET")
+	router.HandleFunc("/api/test", Something).Methods("GET")
 
 	SetRoute("POST", "/secure", Secure)
 

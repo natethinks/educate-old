@@ -34,3 +34,8 @@ func Test(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome to the test page")
 	return
 }
+
+func Something(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Welcome to the something page")
+	return
+}
